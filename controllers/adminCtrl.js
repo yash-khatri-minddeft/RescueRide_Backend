@@ -79,6 +79,8 @@ const adminOTPController = async (req, res) => {
         expiresIn: "7d",
       });
       res.status(200).send({ message: "Login Successfully", success: true, token })
+    } else {
+      res.status(200).send({ message: "OTP invalid", success: false })
     }
   } catch (err) {
     console.log(err);
@@ -94,7 +96,7 @@ const authController = async (req, res) => {
     user.password = undefined;
     if (!user) {
       return res
-        .status(200)
+        .status(400)
         .send({ message: "User Not Found", success: false });
     } else {
       res.status(200).send({
