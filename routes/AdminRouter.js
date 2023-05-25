@@ -1,8 +1,12 @@
 const express = require('express');
+const {adminRegisterController,adminLoginController,authController} = require('../controllers/adminCtrl')
+
 const router = express.Router();
 
-router.post('/admin-signup',(req,res) => {
-  res.status(200).json({msg: 'hello'})
-})
+router.post('/admin-signup',adminRegisterController)
+
+router.post('/admin-login',adminLoginController)
+
+router.post('/getUserData',authController)
 
 module.exports = router;
