@@ -1,6 +1,7 @@
-const admin = require("../models/AdminModel");
+const admin = require("./../models/AdminModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const otpGenerator = require('otp-generator');
 
 const adminRegisterController = async (req, res) => {
   try {
@@ -41,12 +42,27 @@ const adminLoginController = async (req, res) => {
         .status(200)
         .send({ message: "Invalid Email Or Password", success: false });
     }
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRETKEY, {
-      expiresIn: "7d",
-    });
+    req.session.user = user._id;
+    req.session.OTP = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
+    console.log(req.session.OTP)
+    var maskedid = "";
+    var myemailId = req.body.email;
+    var index = myemailId.lastIndexOf("@");
+    var prefix = myemailId.substring(0, index);
+    var postfix = myemailId.substring(index);
+
+    var mask = prefix.split('').map(function (o, i) {
+      if (i < 2 || i >= (index - 2)) {
+        return o;
+      } else {
+        return '*';
+      }
+    }).join('');
+
+    maskedid = mask + postfix;
     res
       .status(200)
-      .send({ message: "Login Successfully", success: true, token });
+      .send({ message: `OTP sent succesfully to ${maskedid}`, success: true });
   } catch (error) {
     console.log(error);
     res.status(500).send({
@@ -54,6 +70,23 @@ const adminLoginController = async (req, res) => {
     });
   }
 };
+
+const adminOTPController = async (req, res) => {
+  try {
+    const { otp } = req.body;
+    if (otp == req.session.OTP) {
+      const token = jwt.sign({ id: req.session.user }, process.env.JWT_SECRETKEY, {
+        expiresIn: "7d",
+      });
+      res.status(200).send({ message: "Login Successfully", success: true, token })
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({
+      message: `Error in Login ${err.message}`,
+    });
+  }
+}
 
 const authController = async (req, res) => {
   try {
@@ -78,5 +111,6 @@ const authController = async (req, res) => {
 module.exports = {
   adminRegisterController,
   adminLoginController,
+  adminOTPController,
   authController,
 };
