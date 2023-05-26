@@ -5,9 +5,7 @@ const hospital = require('../models/HospitalModel');
 
 const adminaddController = async(req,res) => {
     try {
-        const newControllers = await controller({...req.body});
-        await newControllers.save()
-        const existingController = await admin.findOne({ email: req.body.email });
+        const existingController = await controller.findOne({ email: req.body.email });
         if (existingController) {
             return res.status(200).send({
                 message:'Controller Already Exists',success:false
@@ -18,9 +16,10 @@ const adminaddController = async(req,res) => {
         const salt = bcrypt.genSaltSync(10);
         const hashedPassword = bcrypt.hashSync(password, salt);
         req.body.password = hashedPassword;
-        const newController = new admin(req.body);
+        const newController = new controller(req.body);
         await newController.save();
-        res.status(201).send({message:'Controller Add Successfully',success:true})
+        newController.password = undefined
+        res.status(201).send({message:'Controller Add Successfully',success:true, data: newController})
     } catch (error) {
         console.log(error);
         res.status(500).send({
@@ -32,7 +31,7 @@ const adminaddController = async(req,res) => {
 
 const adminaddambulanceController = async(req,res) => {
     try {
-        const newUserAddAmbulance = await ambulance({...req.body,status:'ideal'});
+        const newUserAddAmbulance = await ambulance({...req.body});
         await newUserAddAmbulance.save();
         res.status(201).send({
             success:true,
@@ -68,7 +67,7 @@ const adminaddhospitalController = async(req,res) => {
 
 const admingetallController = async(req,res) => {
     try {
-        const fetchController = await controller.find({})
+        const fetchController = await controller.find({},{password:0})
         res.status(200).send({
             success:true,
             message:'Controller List',
@@ -120,6 +119,7 @@ const admingetambulanceController = async(req,res) => {
         })
     }
 }
+
 
 
 module.exports = {

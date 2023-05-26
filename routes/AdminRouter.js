@@ -10,7 +10,7 @@ router.post('/admin-login',adminLoginController);
 
 router.post('/admin-otp',adminOTPController);
 
-router.post('/getUserData',authmiddleware,authController);
+router.get('/getUserData',authmiddleware,authController);
 
 router.get('/checkLogin',authmiddleware,checkLoginController);
 
