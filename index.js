@@ -9,6 +9,7 @@ const session = require('express-session');
 
 const AdminRouter = require('./routes/AdminRouter');
 const AuthMiddleWare = require('./middlewares/AuthMiddleWare');
+const ControllerRouter = require('./routes/ControllerRoutes');
 
 app.use(express.json())
 app.use(session({
@@ -22,6 +23,7 @@ app.use(session({
   }
 }))
 app.use('/api/admin',AdminRouter);
+app.use('/api/controller',ControllerRouter);
 app.listen(4000, () => {
   mongoose.connect(process.env.CLUSTER_URL)
   .then(() => {
