@@ -110,9 +110,16 @@ const authController = async (req, res) => {
   }
 };
 
+const checkLoginController = async(req,res) => {
+  res.status(200).send({message:'User Logged In',isLoggedIn:true})
+}
+
+
+
 module.exports = {
   adminRegisterController,
   adminLoginController,
   adminOTPController,
   authController,
+  checkLoginController
 };
