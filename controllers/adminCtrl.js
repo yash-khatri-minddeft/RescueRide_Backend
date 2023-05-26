@@ -34,7 +34,7 @@ const adminLoginController = async (req, res) => {
     if (!user) {
       return res
         .status(200)
-        .send({ message: "user not found", success: false });
+        .send({ message: "User not found", success: false });
     }
     const isMatch = await bcrypt.compare(req.body.password, user.password);
     if (!isMatch) {
