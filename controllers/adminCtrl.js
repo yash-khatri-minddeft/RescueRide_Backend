@@ -2,7 +2,7 @@ const admin = require("./../models/AdminModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const otpGenerator = require('otp-generator');
-const sendMail = require('./OTPController');
+const { sendMail } = require('./MailController');
 
 const adminRegisterController = async (req, res) => {
   try {
@@ -64,7 +64,7 @@ const adminLoginController = async (req, res) => {
     res
       .status(200)
       .send({ message: `OTP sent succesfully to ${maskedid}`, success: true });
-      sendMail(req.body.email, req.session.OTP)
+    sendMail(req.body.email, req.session.OTP)
   } catch (error) {
     console.log(error);
     res.status(500).send({

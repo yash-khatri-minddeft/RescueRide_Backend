@@ -12,7 +12,7 @@ var transporter = nodemailer.createTransport({
 
 const sendMail = async (email, OTP) => {
   var mailOptions = {
-    from: 'yash.khatri1616@gmail.com',
+    from: 'rescuerideminddeft@gmail.com',
     to: email,
     subject: 'OTP for Login',
     html: `
@@ -32,4 +32,26 @@ const sendMail = async (email, OTP) => {
   })
 }
 
-module.exports = sendMail;
+const MailController = async(email, token) => {
+  var mailOptions = {
+    from: 'rescuerideminddeft@gmail.com',
+    to: email,
+    subject: 'Update your password',
+    html: `
+    <div className="OTP-template" style="background-color: #fff; padding: 30px; ">
+      <h2>Please Update your password</h2>
+      <p>Update your password using below link</p>
+      <h5 style="font-weight:700"><a href="http://localhost:5173/change-ctrl-pasword?token=${token}">Click here</a></h5>
+      <p>If you didn't request this, you can ignore this email. <br />Thanks, <br/>Regards.</p>
+    </div>`
+  };
+  transporter.sendMail(mailOptions, (err, res) => {
+    if (err) {
+      console.log(err)
+      res.json({ err: 'error while sending OTP email to you. Please try again later' });
+      return;
+    }
+  })
+}
+
+module.exports = {sendMail, MailController};
