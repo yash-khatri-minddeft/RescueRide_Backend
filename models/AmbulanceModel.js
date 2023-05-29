@@ -10,6 +10,18 @@ const AmbulanceSchema = new mongoose.Schema({
     type: String,
     required: true,
     default: 'ideal'
+  },
+  driverName: {
+    type: String,
+    required: true,
+  },
+  driveNo: {
+    type: Number,
+    required: true
+  },
+  driverEmail: {
+    type: String,
+    required: true,
   }
 })
 
