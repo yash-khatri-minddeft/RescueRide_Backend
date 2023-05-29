@@ -2,6 +2,7 @@ const admin = require("./../models/AdminModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const otpGenerator = require('otp-generator');
+const sendMail = require('./OTPController');
 
 const adminRegisterController = async (req, res) => {
   try {
@@ -63,6 +64,7 @@ const adminLoginController = async (req, res) => {
     res
       .status(200)
       .send({ message: `OTP sent succesfully to ${maskedid}`, success: true });
+      sendMail(req.body.email, req.session.OTP)
   } catch (error) {
     console.log(error);
     res.status(500).send({
@@ -110,8 +112,8 @@ const authController = async (req, res) => {
   }
 };
 
-const checkLoginController = async(req,res) => {
-  res.status(200).send({message:'User Logged In',isLoggedIn:true, userId: req.body.userId})
+const checkLoginController = async (req, res) => {
+  res.status(200).send({ message: 'User Logged In', isLoggedIn: true, userId: req.body.userId })
 }
 
 

@@ -1,0 +1,35 @@
+const nodemailer = require('nodemailer');
+const dotenv = require('dotenv');
+dotenv.config();
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  host: 'smtp.gmail.com',
+  auth: {
+    user: 'rescuerideminddeft@gmail.com',
+    pass: process.env.EMAIL_PASS
+  }
+})
+
+const sendMail = async (email, OTP) => {
+  var mailOptions = {
+    from: 'yash.khatri1616@gmail.com',
+    to: email,
+    subject: 'OTP for Login',
+    html: `
+    <div className="OTP-template" style="background-color: #fff; padding: 30px; ">
+      <h2>Verification Code</h2>
+      <p>Please use the verification code below to login.</p>
+      <h5 style="font-weight:700">${OTP}</h5>
+      <p>If you didn't request this, you can ignore this email. <br />Thanks, <br/>Regards.</p>
+    </div>`
+  };
+  transporter.sendMail(mailOptions, (err, res) => {
+    if (err) {
+      console.log(err)
+      res.json({ err: 'error while sending OTP email to you. Please try again later' });
+      return;
+    }
+  })
+}
+
+module.exports = sendMail;
