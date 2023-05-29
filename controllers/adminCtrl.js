@@ -95,12 +95,12 @@ const adminOTPController = async (req, res) => {
 const authController = async (req, res) => {
   try {
     const user = await admin.findById({ _id: req.body.userId });
-    user.password = undefined;
     if (!user) {
       return res
-        .status(400)
-        .send({ message: "User Not Found", success: false });
+      .status(400)
+      .send({ message: "User Not Found", success: false });
     } else {
+      user.password = undefined;
       res.status(200).send({
         success: true,
         data: user,
