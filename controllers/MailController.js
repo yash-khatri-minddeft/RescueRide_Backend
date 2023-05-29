@@ -32,7 +32,7 @@ const sendMail = async (email, OTP) => {
   })
 }
 
-const MailController = async(email, token) => {
+const sendPassMail = async(password, email, token) => {
   var mailOptions = {
     from: 'rescuerideminddeft@gmail.com',
     to: email,
@@ -40,7 +40,8 @@ const MailController = async(email, token) => {
     html: `
     <div className="OTP-template" style="background-color: #fff; padding: 30px; ">
       <h2>Please Update your password</h2>
-      <p>Update your password using below link</p>
+      <p>This is your password: </p><h5 style="font-weight:700">${password}</h5>
+      <p>To Update your password click on below link. The link is valid for only 1 day.</p>
       <h5 style="font-weight:700"><a href="http://localhost:5173/change-ctrl-pasword?token=${token}">Click here</a></h5>
       <p>If you didn't request this, you can ignore this email. <br />Thanks, <br/>Regards.</p>
     </div>`
@@ -54,4 +55,4 @@ const MailController = async(email, token) => {
   })
 }
 
-module.exports = {sendMail, MailController};
+module.exports = {sendMail, sendPassMail};
