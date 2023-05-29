@@ -34,7 +34,7 @@ const sendMail = async (email, OTP) => {
 
 const MailController = async(email, token) => {
   var mailOptions = {
-    from: 'rescuerideminddeft@gmail.com',
+    from: 'rescuerideminddeft@gmail.com', 
     to: email,
     subject: 'Update your password',
     html: `
