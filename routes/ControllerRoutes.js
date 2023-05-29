@@ -1,5 +1,5 @@
 const express = require('express')
-const { adminaddController, adminaddambulanceController, adminaddhospitalController, admingethospitalController, admingetallController, admingetambulanceController, controllerPasswordUpdate } = require('../controllers/adminAddController')
+const { adminaddController, adminaddambulanceController, adminaddhospitalController, admingethospitalController, admingetallController, admingetambulanceController, controllerPasswordUpdate, checkControllerLogin } = require('../controllers/adminAddController')
 const authmiddleware = require('../middlewares/AuthMiddleWare')
 
 const router = express.Router();
@@ -16,7 +16,7 @@ router.get('/admin-gethospital', authmiddleware, admingethospitalController);
 
 router.get('/admin-getambulance', authmiddleware, admingetambulanceController);
 
-router.get('/check-login', authmiddleware, check)
+router.get('/check-login', authmiddleware, checkControllerLogin)
 
 router.post('/ctrl-pass-update', controllerPasswordUpdate)
 

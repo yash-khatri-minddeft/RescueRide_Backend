@@ -168,6 +168,15 @@ const controllerPasswordUpdate = async (req, res) => {
   });
 };
 
+const checkControllerLogin = async (req, res) => {
+	const getUserDetail = await controller.findById({ _id: req.body.userId });
+  if(getUserDetail) {
+    res.status(200).send({ message: 'User Logged In', isController: true, userId: req.body.userId })
+  } else {
+    res.status(400).send({message: 'User not found', isController: false})
+  }
+}
+
 module.exports = {
   adminaddController,
   adminaddambulanceController,
@@ -176,4 +185,5 @@ module.exports = {
   admingethospitalController,
   admingetambulanceController,
   controllerPasswordUpdate,
+	checkControllerLogin
 };
