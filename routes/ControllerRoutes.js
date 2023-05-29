@@ -12,9 +12,9 @@ router.post('/admin-addhospital', authmiddleware, adminaddhospitalController);
 
 router.get('/admin-getallcontroller', authmiddleware, admingetallController);
 
-router.get('/admin-gethospital', authmiddleware, admingethospitalController);
+router.get('/admin-gethospital', admingethospitalController);
 
-router.get('/admin-getambulance', authmiddleware, admingetambulanceController);
+router.get('/admin-getambulance', admingetambulanceController);
 
 router.get('/check-login', authmiddleware, checkControllerLogin)
 
