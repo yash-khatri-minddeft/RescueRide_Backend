@@ -11,6 +11,10 @@ const AmbulanceSchema = new mongoose.Schema({
     required: true,
     default: 'ideal'
   },
+  type: {
+    type: String,
+    required: true
+  },
   driverName: {
     type: String,
     required: true,
@@ -22,7 +26,7 @@ const AmbulanceSchema = new mongoose.Schema({
   driverEmail: {
     type: String,
     required: true,
-  }
+  },
 })
 
 const ambulance = new mongoose.model('ambulance', AmbulanceSchema);

@@ -42,14 +42,14 @@ const adminaddambulanceController = async (req, res) => {
 		await newUserAddAmbulance.save();
 		res.status(201).send({
 			success: true,
-			message: 'Ambulance Applied Successfully'
+			message: 'Ambulance Added Successfully'
 		})
 	} catch (error) {
 		console.log(error);
 		res.status(500).send({
 			success: false,
 			error,
-			message: 'Error While Applying For Ambulance'
+			message: 'Error While Adding Ambulance'
 		})
 	}
 }
