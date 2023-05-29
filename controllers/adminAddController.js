@@ -54,6 +54,7 @@ const adminaddambulanceController = async (req, res) => {
     res.status(201).send({
       success: true,
       message: "Ambulance Added Successfully",
+      data:newUserAddAmbulance
     });
   } catch (error) {
     console.log(error);
