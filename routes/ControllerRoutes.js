@@ -16,7 +16,7 @@ router.get('/admin-gethospital', authmiddleware, admingethospitalController);
 
 router.get('/admin-getambulance', authmiddleware, admingetambulanceController);
 
-route.get('/check-login', authmiddleware, check)
+router.get('/check-login', authmiddleware, check)
 
 router.post('/ctrl-pass-update', controllerPasswordUpdate)
 
