@@ -97,8 +97,8 @@ const authController = async (req, res) => {
     const user = await admin.findById({ _id: req.body.userId });
     if (!user) {
       return res
-      .status(400)
-      .send({ message: "User Not Found", success: false });
+        .status(400)
+        .send({ message: "User Not Found", success: false });
     } else {
       user.password = undefined;
       res.status(200).send({
@@ -112,8 +112,13 @@ const authController = async (req, res) => {
   }
 };
 
-const checkLoginController = async (req, res) => {
-  res.status(200).send({ message: 'User Logged In', isLoggedIn: true, userId: req.body.userId })
+const checkAdminLogin = async (req, res) => {
+  const getUserDetail = await admin.findById({ _id: req.body.userId });
+  if(getUserDetail) {
+    res.status(200).send({ message: 'User Logged In', isAdmin: true, userId: req.body.userId })
+  } else {
+    res.status(200).send({message: 'User not found', isAdmin: false})
+  }
 }
 
 
@@ -123,5 +128,5 @@ module.exports = {
   adminLoginController,
   adminOTPController,
   authController,
-  checkLoginController
+  checkAdminLogin
 };
