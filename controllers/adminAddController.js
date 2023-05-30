@@ -5,6 +5,7 @@ const hospital = require("../models/HospitalModel");
 const cryptoRandomStringAsync = require("crypto-random-string");
 const jwt = require("jsonwebtoken");
 const { sendPassMail } = require("./MailController");
+const booking = require("../models/BookingModel");
 
 const adminaddController = async (req, res) => {
   try {
@@ -178,6 +179,25 @@ const checkControllerLogin = async (req, res) => {
   }
 }
 
+const addBookingController = async(req,res) => {
+  try {
+    const newAddBooking = await booking({...ree.body});
+    await newAddBooking.save();
+    res.status(201).send({
+      success:true,
+      message:'Booking Added Successfully',
+      data:newAddBooking,
+    })
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success:false,
+      error,
+      message:'Error While Applying For Booking'
+    })
+  }
+}
+
 module.exports = {
   adminaddController,
   adminaddambulanceController,
@@ -186,5 +206,6 @@ module.exports = {
   admingethospitalController,
   admingetambulanceController,
   controllerPasswordUpdate,
-	checkControllerLogin
+	checkControllerLogin,
+  addBookingController
 };
