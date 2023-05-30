@@ -219,6 +219,68 @@ const addBookingController = async(req,res) => {
   }
 }
 
+const controllerLoginController = async(req,res) => {
+  try {
+    const user = await controller.findOne({email:req.body.email});
+    if (!user) {
+      return res
+        .status(200)
+        .send({ message: "User not found", success: false });
+    }
+    const isMatch = await bcrypt.compare(req.body.password, user.password);
+    if (!isMatch) {
+      return res
+        .status(200)
+        .send({ message: "Invalid Email Or Password", success: false });
+    }
+    req.session.user = user._id;
+    req.session.OTP = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
+    console.log(req.session.OTP)
+    var maskedid = "";
+    var myemailId = req.body.email;
+    var index = myemailId.lastIndexOf("@");
+    var prefix = myemailId.substring(0, index);
+    var postfix = myemailId.substring(index);
+
+    var mask = prefix.split('').map(function (o, i) {
+      if (i < 2 || i >= (index - 2)) {
+        return o;
+      } else {
+        return '*';
+      }
+    }).join('');
+    maskedid = mask + postfix;
+    res
+      .status(200)
+      .send({ message: `OTP sent succesfully to ${maskedid}`, success: true });
+    sendMail(req.body.email, req.session.OTP)
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      message: `Error in Login ${error.message}`,
+    });
+  }
+}
+
+const controllerOTPController = async (req, res) => {
+  try {
+    const { otp } = req.body;
+    if (otp == req.session.OTP) {
+      const token = jwt.sign({ id: req.session.user }, process.env.JWT_SECRETKEY, {
+        expiresIn: "7d",
+      });
+      res.status(200).send({ message: "Login Successfully", success: true, token })
+    } else {
+      res.status(200).send({ message: "OTP invalid", success: false })
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({
+      message: `Error in Login ${err.message}`,
+    });
+  }
+}
+
 module.exports = {
   adminaddController,
   adminaddambulanceController,
@@ -229,5 +291,8 @@ module.exports = {
   admingetambulanceController,
   controllerPasswordUpdate,
   checkControllerLogin,
-  addBookingController
+  addBookingController,
+  controllerLoginController,
+  controllerOTPController,
+  checkControllerLogin
 };
