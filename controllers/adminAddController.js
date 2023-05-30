@@ -3,8 +3,9 @@ const controller = require("../models/ControllerModel");
 const bcrypt = require("bcryptjs");
 const hospital = require("../models/HospitalModel");
 const cryptoRandomStringAsync = require("crypto-random-string");
+const otpGenerator = require('otp-generator');
 const jwt = require("jsonwebtoken");
-const { sendPassMail } = require("./MailController");
+const { sendMail, sendPassMail } = require("./MailController");
 const booking = require("../models/BookingModel");
 
 const adminaddController = async (req, res) => {
