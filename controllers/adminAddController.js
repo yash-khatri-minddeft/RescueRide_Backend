@@ -202,7 +202,7 @@ const checkControllerLogin = async (req, res) => {
 
 const addBookingController = async(req,res) => {
   try {
-    const newAddBooking = await booking({...ree.body});
+    const newAddBooking = await booking({...req.body});
     await newAddBooking.save();
     res.status(201).send({
       success:true,
