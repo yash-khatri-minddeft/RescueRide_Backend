@@ -55,7 +55,7 @@ const adminaddambulanceController = async (req, res) => {
     res.status(201).send({
       success: true,
       message: "Ambulance Added Successfully",
-      data:newUserAddAmbulance
+      data: newUserAddAmbulance
     });
   } catch (error) {
     console.log(error);
@@ -104,7 +104,28 @@ const admingetallController = async (req, res) => {
   }
 };
 
+const usergethospitalController = async (req, res) => {
+  const { latitude, longitude } = req.body;
+  try {
+    const fetchHospital = await hospital.find({ $and: [{ longitude: { $gte: longitude - 0.2, $lte: longitude + 0.2 } }, { latitude: { $gte: latitude - 0.2, $lte: latitude + 0.2 } }] });
+    res.status(200).send({
+      success: true,
+      message: "Hospital List",
+      data: fetchHospital,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      error,
+      message: "Error While Fetching Hospitals",
+    });
+  }
+};
+
+
 const admingethospitalController = async (req, res) => {
+  const { latitude, longitude } = req.body;
   try {
     const fetchHospital = await hospital.find({});
     res.status(200).send({
@@ -171,11 +192,11 @@ const controllerPasswordUpdate = async (req, res) => {
 };
 
 const checkControllerLogin = async (req, res) => {
-	const getUserDetail = await controller.findById({ _id: req.body.userId });
-  if(getUserDetail) {
+  const getUserDetail = await controller.findById({ _id: req.body.userId });
+  if (getUserDetail) {
     res.status(200).send({ message: 'User Logged In', isController: true, userId: req.body.userId })
   } else {
-    res.status(400).send({message: 'User not found', isController: false})
+    res.status(400).send({ message: 'User not found', isController: false })
   }
 }
 
@@ -204,8 +225,9 @@ module.exports = {
   adminaddhospitalController,
   admingetallController,
   admingethospitalController,
+  usergethospitalController,
   admingetambulanceController,
   controllerPasswordUpdate,
-	checkControllerLogin,
+  checkControllerLogin,
   addBookingController
 };
