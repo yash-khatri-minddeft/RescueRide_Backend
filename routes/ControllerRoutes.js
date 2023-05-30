@@ -1,5 +1,5 @@
 const express = require('express')
-const { adminaddController, adminaddambulanceController, adminaddhospitalController, admingethospitalController, admingetallController, admingetambulanceController, controllerPasswordUpdate, checkControllerLogin } = require('../controllers/adminAddController')
+const { adminaddController, adminaddambulanceController, adminaddhospitalController, admingethospitalController, admingetallController, admingetambulanceController, controllerPasswordUpdate, checkControllerLogin,addBookingController } = require('../controllers/adminAddController')
 const authmiddleware = require('../middlewares/AuthMiddleWare')
 
 const router = express.Router();
@@ -19,5 +19,7 @@ router.get('/admin-getambulance', admingetambulanceController);
 router.get('/check-login', authmiddleware, checkControllerLogin)
 
 router.post('/ctrl-pass-update', controllerPasswordUpdate)
+
+router.post('/add-booking',addBookingController);
 
 module.exports = router;

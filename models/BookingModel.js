@@ -25,11 +25,20 @@ const BookingSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  ambulance_number: {
+    type: String,
+    required: true,
+    default: null,
+  },
   ambulance_longitude: {
     type: Number,
+    required: true,
+    default: null,
   },
   ambulance_latitude: {
     type: Number,
+    required: true,
+    default: null,
   },
 });
 
