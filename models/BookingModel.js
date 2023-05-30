@@ -18,7 +18,7 @@ const BookingSchema = new mongoose.Schema({
     required: true,
   },
   hospitalid: {
-    type: Number,
+    type: String,
     required: true,
   },
   type_of_ambulance: {
@@ -28,18 +28,23 @@ const BookingSchema = new mongoose.Schema({
   ambulance_number: {
     type: String,
     required: true,
-    default: null,
+    default: "null",
   },
   ambulance_longitude: {
     type: Number,
     required: true,
-    default: null,
+    default: 0,
   },
   ambulance_latitude: {
     type: Number,
     required: true,
-    default: null,
+    default: 0,
   },
+  status: {
+    type: String,
+    required: true,
+    default: 'pending'
+  }
 });
 
 const booking = new mongoose.model("booking", BookingSchema);
