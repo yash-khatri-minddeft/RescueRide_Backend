@@ -21,7 +21,7 @@ const BookingSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  types_of_ambulance: {
+  type_of_ambulance: {
     type: String,
     required: true,
   },
