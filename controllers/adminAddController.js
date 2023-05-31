@@ -191,7 +191,7 @@ const controllerPasswordUpdate = async (req, res) => {
       } else {
         res
           .status(200)
-          .send({ success: false, error: `Password didn't matched!` });
+          .send({ success: false, message: `Password didn't matched!` });
       }
     }
   });
