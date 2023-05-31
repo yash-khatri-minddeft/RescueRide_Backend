@@ -170,10 +170,10 @@ const controllerPasswordUpdate = async (req, res) => {
     } else {
       const userId = decode.id;
       const userFound = await controller.findOne({ _id: userId });
-      if (userFound) {
+      if (password === cPassword) {
         const password = req.body.password;
         const cPassword = req.body.cPassword;
-        if (password === cPassword) {
+        if (userFound) {
           const salt = bcrypt.genSaltSync(10);
           const hashedPassword = bcrypt.hashSync(password, salt);
           const getCtrl = await controller.findOneAndUpdate(
@@ -186,12 +186,12 @@ const controllerPasswordUpdate = async (req, res) => {
             token: token,
           });
         } else {
-          res
-          .status(200)
-          .send({ success: false, error: `Password didn't matched!` });
+          res.status(200).send({ success: false, message: 'user not found' })
         }
       } else {
-        res.status(200).send({ success: false, message: 'user not found' })
+        res
+          .status(200)
+          .send({ success: false, error: `Password didn't matched!` });
       }
     }
   });
