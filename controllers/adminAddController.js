@@ -303,6 +303,26 @@ const controllerOTPController = async (req, res) => {
   }
 }
 
+const deleteController = async(req,res) => {
+  try {
+    const {id} = req.params;
+    const user = await controller.findByIdAndDelete(id);
+    if(user){
+      res.status(202).send({success:true,message:'Controller Deleted Successfully'})
+    }
+    else
+    {
+      res.status(404).send({success:false,message:'User Not Found'})
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      message: `ErrorWhile Deleting User`,
+    });
+  }
+}
+
+
 
 module.exports = {
   adminaddController,
@@ -318,5 +338,6 @@ module.exports = {
   controllerLoginController,
   controllerOTPController,
   authController,
-  checkControllerLogin
+  checkControllerLogin,
+  deleteController
 };
