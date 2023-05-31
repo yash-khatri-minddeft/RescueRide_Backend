@@ -170,9 +170,9 @@ const controllerPasswordUpdate = async (req, res) => {
     } else {
       const userId = decode.id;
       const userFound = await controller.findOne({ _id: userId });
+      const password = req.body.password;
+      const cPassword = req.body.cPassword;
       if (password === cPassword) {
-        const password = req.body.password;
-        const cPassword = req.body.cPassword;
         if (userFound) {
           const salt = bcrypt.genSaltSync(10);
           const hashedPassword = bcrypt.hashSync(password, salt);
