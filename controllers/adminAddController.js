@@ -168,21 +168,27 @@ const controllerPasswordUpdate = async (req, res) => {
     if (err) {
       return res.status(200).send({ message: "Auth Failed", success: false });
     } else {
-      const password = req.body.password;
-      const cPassword = req.body.cPassword;
-      if (password === cPassword) {
-        const salt = bcrypt.genSaltSync(10);
-        const hashedPassword = bcrypt.hashSync(password, salt);
-        const userId = decode.id;
-        const getCtrl = await controller.findOneAndUpdate(
-          { _id: userId },
-          { password: hashedPassword }
-        );
-        res.status(200).send({
-          success: true,
-          message: "Password changed successfully!",
-          token: token,
-        });
+      const userId = decode.id;
+      const userFound = await controller.findOne({ _id: userId });
+      if (userFound) {
+
+        const password = req.body.password;
+        const cPassword = req.body.cPassword;
+        if (password === cPassword) {
+          const salt = bcrypt.genSaltSync(10);
+          const hashedPassword = bcrypt.hashSync(password, salt);
+          const getCtrl = await controller.findOneAndUpdate(
+            { _id: userId },
+            { password: hashedPassword }
+          );
+          res.status(200).send({
+            success: true,
+            message: "Password changed successfully!",
+            token: token,
+          });
+        } else {
+          res.status(200).send({ success: false, message: 'user not found' })
+        }
       } else {
         res
           .status(200)
@@ -201,28 +207,28 @@ const checkControllerLogin = async (req, res) => {
   }
 }
 
-const addBookingController = async(req,res) => {
+const addBookingController = async (req, res) => {
   try {
-    const newAddBooking = await booking({...req.body});
+    const newAddBooking = await booking({ ...req.body });
     await newAddBooking.save();
     res.status(201).send({
-      success:true,
-      message:'Booking Added Successfully',
-      data:newAddBooking,
+      success: true,
+      message: 'Booking Added Successfully',
+      data: newAddBooking,
     })
   } catch (error) {
     console.log(error);
     res.status(500).send({
-      success:false,
+      success: false,
       error,
-      message:'Error While Applying For Booking'
+      message: 'Error While Applying For Booking'
     })
   }
 }
 
-const controllerLoginController = async(req,res) => {
+const controllerLoginController = async (req, res) => {
   try {
-    const user = await controller.findOne({email:req.body.email});
+    const user = await controller.findOne({ email: req.body.email });
     if (!user) {
       return res
         .status(200)
@@ -303,16 +309,15 @@ const controllerOTPController = async (req, res) => {
   }
 }
 
-const deleteController = async(req,res) => {
+const deleteController = async (req, res) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
     const user = await controller.findByIdAndDelete(id);
-    if(user){
-      res.status(202).send({success:true,message:'Controller Deleted Successfully'})
+    if (user) {
+      res.status(202).send({ success: true, message: 'Controller Deleted Successfully' })
     }
-    else
-    {
-      res.status(404).send({success:false,message:'User Not Found'})
+    else {
+      res.status(404).send({ success: false, message: 'User Not Found' })
     }
   } catch (error) {
     console.log(error);
