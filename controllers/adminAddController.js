@@ -371,15 +371,11 @@ const deleteController = async (req, res) => {
 
 const getPendingBooking = async (req, res) => {
   try {
-    const bookings = await booking.find({
+    const bookings = await booking.findOne({
       _id: req.body.id,
       status: req.body.status,
     });
-    if (booking.length) {
-      res.status(200).send({ success: true, data: bookings });
-    } else {
-      res.status(200).send({ success: false });
-    }
+    res.status(200).send({ success: true, data: bookings });
   } catch (error) {
     console.log(error);
     res.status(500).send({
