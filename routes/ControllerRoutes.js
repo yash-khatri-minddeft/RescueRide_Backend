@@ -1,5 +1,5 @@
 const express = require('express')
-const { adminaddController, adminaddambulanceController, adminaddhospitalController, admingethospitalController, admingetallController, admingetambulanceController, controllerPasswordUpdate, checkControllerLogin, usergethospitalController,addBookingController,controllerLoginController,controllerOTPController, authController,deleteController } = require('../controllers/adminAddController')
+const { adminaddController, adminaddambulanceController, adminaddhospitalController, admingethospitalController, admingetallController, admingetambulanceController, controllerPasswordUpdate, checkControllerLogin, usergethospitalController,addBookingController,controllerLoginController,controllerOTPController, authController,deleteController,getPendingBooking } = require('../controllers/adminAddController')
 const authmiddleware = require('../middlewares/AuthMiddleWare')
 
 const router = express.Router();
@@ -31,5 +31,8 @@ router.post('/controller-otp',controllerOTPController);
 router.get('/getUserData',authmiddleware, authController);
 
 router.delete('/deleteController/:id',deleteController);
+
+router.post('/get-pending-booking',getPendingBooking);
+
 
 module.exports = router;

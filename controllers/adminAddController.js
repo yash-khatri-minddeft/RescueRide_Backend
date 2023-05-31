@@ -3,7 +3,7 @@ const controller = require("../models/ControllerModel");
 const bcrypt = require("bcryptjs");
 const hospital = require("../models/HospitalModel");
 const cryptoRandomStringAsync = require("crypto-random-string");
-const otpGenerator = require('otp-generator');
+const otpGenerator = require("otp-generator");
 const jwt = require("jsonwebtoken");
 const { sendMail, sendPassMail } = require("./MailController");
 const booking = require("../models/BookingModel");
@@ -56,7 +56,7 @@ const adminaddambulanceController = async (req, res) => {
     res.status(201).send({
       success: true,
       message: "Ambulance Added Successfully",
-      data: newUserAddAmbulance
+      data: newUserAddAmbulance,
     });
   } catch (error) {
     console.log(error);
@@ -108,7 +108,12 @@ const admingetallController = async (req, res) => {
 const usergethospitalController = async (req, res) => {
   const { latitude, longitude } = req.body;
   try {
-    const fetchHospital = await hospital.find({ $and: [{ longitude: { $gte: longitude - 0.2, $lte: longitude + 0.2 } }, { latitude: { $gte: latitude - 0.2, $lte: latitude + 0.2 } }] });
+    const fetchHospital = await hospital.find({
+      $and: [
+        { longitude: { $gte: longitude - 0.2, $lte: longitude + 0.2 } },
+        { latitude: { $gte: latitude - 0.2, $lte: latitude + 0.2 } },
+      ],
+    });
     res.status(200).send({
       success: true,
       message: "Hospital List",
@@ -123,7 +128,6 @@ const usergethospitalController = async (req, res) => {
     });
   }
 };
-
 
 const admingethospitalController = async (req, res) => {
   const { latitude, longitude } = req.body;
@@ -186,7 +190,7 @@ const controllerPasswordUpdate = async (req, res) => {
             token: token,
           });
         } else {
-          res.status(200).send({ success: false, message: 'user not found' })
+          res.status(200).send({ success: false, message: "user not found" });
         }
       } else {
         res
@@ -200,11 +204,15 @@ const controllerPasswordUpdate = async (req, res) => {
 const checkControllerLogin = async (req, res) => {
   const getUserDetail = await controller.findById({ _id: req.body.userId });
   if (getUserDetail) {
-    res.status(200).send({ message: 'User Logged In', isController: true, userId: req.body.userId })
+    res.status(200).send({
+      message: "User Logged In",
+      isController: true,
+      userId: req.body.userId,
+    });
   } else {
-    res.status(200).send({ message: 'User not found', isController: false })
+    res.status(200).send({ message: "User not found", isController: false });
   }
-}
+};
 
 const addBookingController = async (req, res) => {
   try {
@@ -212,18 +220,18 @@ const addBookingController = async (req, res) => {
     await newAddBooking.save();
     res.status(201).send({
       success: true,
-      message: 'Booking Added Successfully',
+      message: "Booking Added Successfully",
       data: newAddBooking,
-    })
+    });
   } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
       error,
-      message: 'Error While Applying For Booking'
-    })
+      message: "Error While Applying For Booking",
+    });
   }
-}
+};
 
 const controllerLoginController = async (req, res) => {
   try {
@@ -240,33 +248,40 @@ const controllerLoginController = async (req, res) => {
         .send({ message: "Invalid Email Or Password", success: false });
     }
     req.session.user = user._id;
-    req.session.OTP = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
-    console.log(req.session.OTP)
+    req.session.OTP = otpGenerator.generate(6, {
+      upperCaseAlphabets: false,
+      specialChars: false,
+      lowerCaseAlphabets: false,
+    });
+    console.log(req.session.OTP);
     var maskedid = "";
     var myemailId = req.body.email;
     var index = myemailId.lastIndexOf("@");
     var prefix = myemailId.substring(0, index);
     var postfix = myemailId.substring(index);
 
-    var mask = prefix.split('').map(function (o, i) {
-      if (i < 2 || i >= (index - 2)) {
-        return o;
-      } else {
-        return '*';
-      }
-    }).join('');
+    var mask = prefix
+      .split("")
+      .map(function (o, i) {
+        if (i < 2 || i >= index - 2) {
+          return o;
+        } else {
+          return "*";
+        }
+      })
+      .join("");
     maskedid = mask + postfix;
     res
       .status(200)
       .send({ message: `OTP sent succesfully to ${maskedid}`, success: true });
-    sendMail(req.body.email, req.session.OTP)
+    sendMail(req.body.email, req.session.OTP);
   } catch (error) {
     console.log(error);
     res.status(500).send({
       message: `Error in Login ${error.message}`,
     });
   }
-}
+};
 
 const authController = async (req, res) => {
   try {
@@ -277,7 +292,7 @@ const authController = async (req, res) => {
         .send({ message: "User Not Found", success: false });
     } else {
       user.password = undefined;
-      req.session.user = user._id
+      req.session.user = user._id;
       res.status(200).send({
         success: true,
         data: user,
@@ -293,12 +308,18 @@ const controllerOTPController = async (req, res) => {
   try {
     const { otp } = req.body;
     if (otp == req.session.OTP) {
-      const token = jwt.sign({ id: req.session.user }, process.env.JWT_SECRETKEY, {
-        expiresIn: "7d",
-      });
-      res.status(200).send({ message: "Login Successfully", success: true, token })
+      const token = jwt.sign(
+        { id: req.session.user },
+        process.env.JWT_SECRETKEY,
+        {
+          expiresIn: "7d",
+        }
+      );
+      res
+        .status(200)
+        .send({ message: "Login Successfully", success: true, token });
     } else {
-      res.status(200).send({ message: "OTP invalid", success: false })
+      res.status(200).send({ message: "OTP invalid", success: false });
     }
   } catch (err) {
     console.log(err);
@@ -306,17 +327,18 @@ const controllerOTPController = async (req, res) => {
       message: `Error in Login ${err.message}`,
     });
   }
-}
+};
 
 const deleteController = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await controller.findByIdAndDelete(id);
     if (user) {
-      res.status(202).send({ success: true, message: 'Controller Deleted Successfully' })
-    }
-    else {
-      res.status(404).send({ success: false, message: 'User Not Found' })
+      res
+        .status(202)
+        .send({ success: true, message: "Controller Deleted Successfully" });
+    } else {
+      res.status(404).send({ success: false, message: "User Not Found" });
     }
   } catch (error) {
     console.log(error);
@@ -324,9 +346,25 @@ const deleteController = async (req, res) => {
       message: `ErrorWhile Deleting User`,
     });
   }
-}
+};
 
-
+const getPendingBooking = async (req, res) => {
+  try {
+    const bookings = await booking.find({
+      _id: req.body.id,
+      status: req.body.status,
+    });
+    if (booking.length) {
+      res.status(200).send({ success: true, data: bookings });
+    }
+    res.status(200).send({ success: false });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      message: `ErrorWhile Pending User`,
+    });
+  }
+};
 
 module.exports = {
   adminaddController,
@@ -343,5 +381,6 @@ module.exports = {
   controllerOTPController,
   authController,
   checkControllerLogin,
-  deleteController
+  deleteController,
+  getPendingBooking,
 };
