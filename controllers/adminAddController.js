@@ -171,7 +171,6 @@ const controllerPasswordUpdate = async (req, res) => {
       const userId = decode.id;
       const userFound = await controller.findOne({ _id: userId });
       if (userFound) {
-
         const password = req.body.password;
         const cPassword = req.body.cPassword;
         if (password === cPassword) {
@@ -187,12 +186,12 @@ const controllerPasswordUpdate = async (req, res) => {
             token: token,
           });
         } else {
-          res.status(200).send({ success: false, message: 'user not found' })
-        }
-      } else {
-        res
+          res
           .status(200)
           .send({ success: false, error: `Password didn't matched!` });
+        }
+      } else {
+        res.status(200).send({ success: false, message: 'user not found' })
       }
     }
   });
