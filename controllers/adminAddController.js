@@ -144,6 +144,16 @@ const admingethospitalController = async (req, res) => {
   }
 };
 
+const getHospitalById = async (req, res) => {
+  const { id } = req.body;
+  const getHospital = await hospital.findById(id)
+  if (getHospital) {
+    res.status(200).send({ success: true, data: getHospital })
+  } else {
+    res.status(200).send({ success: false, err: "Hospital not found" })
+  }
+}
+
 const admingetambulanceController = async (req, res) => {
   try {
     const fetchAmbulance = await ambulance.find({});
@@ -196,6 +206,17 @@ const controllerPasswordUpdate = async (req, res) => {
     }
   });
 };
+
+
+const getBookingById = async (req, res) => {
+  const { id } = req.body;
+  const getBooking = await booking.findById(id)
+  if (getBooking) {
+    res.status(200).send({ success: true, data: getBooking })
+  } else {
+    res.status(200).send({ success: false, err: "Booking not found" })
+  }
+}
 
 const checkControllerLogin = async (req, res) => {
   const getUserDetail = await controller.findById({ _id: req.body.userId });
@@ -334,6 +355,8 @@ module.exports = {
   adminaddhospitalController,
   admingetallController,
   admingethospitalController,
+  getHospitalById,
+  getBookingById,
   usergethospitalController,
   admingetambulanceController,
   controllerPasswordUpdate,
