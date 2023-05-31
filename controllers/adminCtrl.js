@@ -117,7 +117,7 @@ const checkAdminLogin = async (req, res) => {
   if(getUserDetail) {
     res.status(200).send({ message: 'User Logged In', isAdmin: true, userId: req.body.userId })
   } else {
-    res.status(404).send({message: 'User not found', isAdmin: false})
+    res.status(200).send({message: 'User not found', isAdmin: false})
   }
 }
 
