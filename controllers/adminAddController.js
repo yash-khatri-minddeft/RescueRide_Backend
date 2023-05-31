@@ -282,6 +282,26 @@ const controllerOTPController = async (req, res) => {
   }
 }
 
+const authController = async (req, res) => {
+  try {
+    const user = await controller.findById({ _id: req.body.userId });
+    if (!user) {
+      return res
+        .status(400)
+        .send({ message: "User Not Found", success: false });
+    } else {
+      user.password = undefined;
+      res.status(200).send({
+        success: true,
+        data: user,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "auth error", success: false, error });
+  }
+};
+
 module.exports = {
   adminaddController,
   adminaddambulanceController,
@@ -295,5 +315,6 @@ module.exports = {
   addBookingController,
   controllerLoginController,
   controllerOTPController,
-  checkControllerLogin
+  checkControllerLogin,
+  authController
 };
