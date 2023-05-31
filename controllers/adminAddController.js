@@ -377,8 +377,9 @@ const getPendingBooking = async (req, res) => {
     });
     if (booking.length) {
       res.status(200).send({ success: true, data: bookings });
+    } else {
+      res.status(200).send({ success: false });
     }
-    res.status(200).send({ success: false });
   } catch (error) {
     console.log(error);
     res.status(500).send({
