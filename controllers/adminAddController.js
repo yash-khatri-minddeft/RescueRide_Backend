@@ -384,6 +384,15 @@ const getPendingBooking = async (req, res) => {
   }
 };
 
+const getAllBookings = async (req, res) => {
+  try {
+    const bookings = await booking.find({status: 'pending'});
+    res.status(200).send({ success: true, data: bookings })
+  } catch (err) {
+    res.status(500).send({ message: 'error while getting bookings, please try again' })
+  }
+}
+
 module.exports = {
   adminaddController,
   adminaddambulanceController,
@@ -403,4 +412,5 @@ module.exports = {
   checkControllerLogin,
   deleteController,
   getPendingBooking,
+  getAllBookings,
 };
