@@ -27,6 +27,16 @@ const AmbulanceSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  latitude: {
+    type: Number,
+    required: true,
+    default: "0.0"
+  },
+  longitude: {
+    type: Number,
+    required: true,
+    default: "0.0"
+  }
 })
 
 const ambulance = new mongoose.model('ambulance', AmbulanceSchema);
