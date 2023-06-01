@@ -113,6 +113,7 @@ const usergethospitalController = async (req, res) => {
         { longitude: { $gte: longitude - 0.2, $lte: longitude + 0.2 } },
         { latitude: { $gte: latitude - 0.2, $lte: latitude + 0.2 } },
       ],
+      status:'ideal'
     });
     res.status(200).send({
       success: true,
@@ -172,6 +173,32 @@ const admingetambulanceController = async (req, res) => {
       success: false,
       error,
       message: "Error While Fetching Ambulance",
+    });
+  }
+};
+
+
+const controllergetAmbulanceController = async (req, res) => {
+  const { latitude, longitude } = req.body;
+  console.log(req.body)
+  try {
+    const fetchAmbulance = await ambulance.find({
+      $and: [
+        { longitude: { $gte: longitude - 0.2, $lte: longitude + 0.2 } },
+        { latitude: { $gte: latitude - 0.2, $lte: latitude + 0.2 } },
+      ],
+    });
+    res.status(200).send({
+      success: true,
+      message: "Ambulance List",
+      data: fetchAmbulance,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      error,
+      message: "Error While Fetching Hospitals",
     });
   }
 };
@@ -403,6 +430,7 @@ module.exports = {
   getBookingById,
   usergethospitalController,
   admingetambulanceController,
+  controllergetAmbulanceController,
   controllerPasswordUpdate,
   checkControllerLogin,
   addBookingController,
