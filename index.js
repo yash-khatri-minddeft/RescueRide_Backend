@@ -12,6 +12,7 @@ const AuthMiddleWare = require('./middlewares/AuthMiddleWare');
 const ControllerRouter = require('./routes/ControllerRoutes');
 const { Server } = require('socket.io');
 const driverRouter = require('./routes/DriverRoutes');
+const ambulance = require('./models/AmbulanceModel');
 
 const io = new Server({
   cors: {
@@ -52,6 +53,14 @@ io.on('connection', (socket) => {
   socket.on('greetings', (data) => {
     console.log('hi', data)
     io.emit('new_booking', (data))
+  })
+  socket.on('join', bookingId => {
+    console.log(bookingId)
+  })
+  socket.on('update_location', async data => {
+    // console.log(data)
+    const updatedCoords = await ambulance.findOneAndUpdate({ _id: data.id }, { latitude: data.latitude, longitude: data.longitude })
+    io.emit('get_location', updatedCoords)
   })
 })
 io.listen(8080)
