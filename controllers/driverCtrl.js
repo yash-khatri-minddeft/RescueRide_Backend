@@ -1,5 +1,8 @@
-const ambulance = require("../models/AmbulanceModel")
+const { async } = require("crypto-random-string");
+const ambulance = require("../models/AmbulanceModel");
 const bcrypt = require("bcryptjs");
+const otpGenerator = require("otp-generator");
+const jwt = require("jsonwebtoken");
 
 const checkLogin = async (req, res) => {
   const getUserDetail = await ambulance.findById({ _id: req.body.userId });
@@ -12,8 +15,7 @@ const checkLogin = async (req, res) => {
   } else {
     res.status(200).send({ message: "User not found", isDriver: false });
   }
-}
-
+};
 
 const authController = async (req, res) => {
   try {
@@ -38,7 +40,84 @@ const authController = async (req, res) => {
   }
 };
 
+const driverLoginController = async (req, res) => {
+  try {
+    const user = await ambulance.findOne({ email: req.body.email });
+    if (!user) {
+      return res
+        .status(200)
+        .send({ message: "User Not Found", success: false });
+    }
+    const isMatch = await bcrypt.compare(req.body.password, user.password);
+    if (!isMatch) {
+      return res
+        .status(200)
+        .send({ message: "Invalid Email or Password", success: false });
+    }
+    req.session.user = user._id;
+    req.session.OTP = otpGenerator.generate(6, {
+      upperCaseAlphabets: false,
+      specialChars: false,
+      lowerCaseAlphabets: false,
+    });
+    console.log(req.session.OTP);
+    var maskedid = "";
+    var myemailId = req.body.email;
+    var index = myemailId.lastIndexOf("@");
+    var prefix = myemailId.substring(0, index);
+    var postfix = myemailId.substring(index);
+
+    var mask = prefix
+      .split("")
+      .map(function (o, i) {
+        if (i < 2 || i >= index - 2) {
+          return o;
+        } else {
+          return "*";
+        }
+      })
+      .join("");
+    maskedid = mask + postfix;
+    res
+      .status(200)
+      .send({ message: `OTP sent succesfully to ${maskedid}`, success: true });
+    sendMail(req.body.email, req.session.OTP);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      message: `Error in Login ${error.message}`,
+    });
+  }
+};
+
+const driverOTPController = async(req,res) => {
+  try {
+    const {otp} = req.body;
+    if (otp == req.session.OTP) {
+      const token = jwt.sign(
+        {id:req.session.user},
+        process.env.JWT_SECRETKEY,
+        {
+          expiresIn:'7d'
+        }
+      );
+      res.status(200).send({message:'Login Successfully',success:true,token})
+    }
+    else
+    {
+      res.status(200).send({message:'OTP invalid',success:false})
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      message:`Error in Login ${error.message}`
+    })
+  }
+}
+
 module.exports = {
   checkLogin,
-  authController
-}
+  authController,
+  driverLoginController,
+  driverOTPController
+};
