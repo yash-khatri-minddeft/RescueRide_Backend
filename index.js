@@ -10,6 +10,13 @@ const session = require('express-session');
 const AdminRouter = require('./routes/AdminRouter');
 const AuthMiddleWare = require('./middlewares/AuthMiddleWare');
 const ControllerRouter = require('./routes/ControllerRoutes');
+const { Server } = require('socket.io');
+
+const io = new Server({
+  cors: {
+    origin: "http://localhost:5173"
+  }
+})
 
 app.use(express.json())
 app.use(session({
@@ -22,15 +29,27 @@ app.use(session({
     httpOnly: true,
   }
 }))
-app.use('/api/admin',AdminRouter);
-app.use('/api/controller',ControllerRouter);
+app.use('/api/admin', AdminRouter);
+app.use('/api/controller', ControllerRouter);
 app.listen(4000, () => {
   mongoose.connect(process.env.CLUSTER_URL)
-  .then(() => {
-    console.log('Database Connected')
-  })
-  .catch((err) => {
-    throw err;
-  })
+    .then(() => {
+      console.log('Database Connected')
+    })
+    .catch((err) => {
+      throw err;
+    })
   console.log('Server Started')
 })
+
+
+io.on('connection', (socket) => {
+  socket.on('join', (account) => {
+    socket.join(account.room)
+  })
+  socket.on('greetings', (data) => {
+    console.log('hi', data)
+    io.emit('new_booking', (data))
+  })
+})
+io.listen(8080)

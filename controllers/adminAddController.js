@@ -107,7 +107,6 @@ const admingetallController = async (req, res) => {
 
 const usergethospitalController = async (req, res) => {
   const { latitude, longitude } = req.body;
-  console.log(req.body)
   try {
     const fetchHospital = await hospital.find({
       $and: [
