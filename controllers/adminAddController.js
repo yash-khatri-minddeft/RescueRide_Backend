@@ -180,7 +180,6 @@ const admingetambulanceController = async (req, res) => {
 
 const controllergetAmbulanceController = async (req, res) => {
   const { latitude, longitude } = req.body;
-  console.log(req.body)
   try {
     const fetchAmbulance = await ambulance.find({
       $and: [
