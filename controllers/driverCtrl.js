@@ -3,6 +3,7 @@ const ambulance = require("../models/AmbulanceModel");
 const bcrypt = require("bcryptjs");
 const otpGenerator = require("otp-generator");
 const jwt = require("jsonwebtoken");
+const { sendMail } = require("./MailController");
 
 const checkLogin = async (req, res) => {
   const getUserDetail = await ambulance.findById({ _id: req.body.userId });
@@ -25,10 +26,8 @@ const authController = async (req, res) => {
         .status(400)
         .send({ message: "User Not Found", success: false });
     } else {
-      user.password = undefined;
+      user.driverPassword = undefined;
       req.session.user = user._id;
-      user.name = user.driverName;
-      user.driverName = undefined;
       res.status(200).send({
         success: true,
         data: user,
@@ -42,13 +41,13 @@ const authController = async (req, res) => {
 
 const driverLoginController = async (req, res) => {
   try {
-    const user = await ambulance.findOne({ email: req.body.email });
+    const user = await ambulance.findOne({ driverEmail: req.body.email });
     if (!user) {
       return res
         .status(200)
         .send({ message: "User Not Found", success: false });
     }
-    const isMatch = await bcrypt.compare(req.body.password, user.password);
+    const isMatch = await bcrypt.compare(req.body.password, user.driverPassword);
     if (!isMatch) {
       return res
         .status(200)
@@ -90,28 +89,41 @@ const driverLoginController = async (req, res) => {
   }
 };
 
-const driverOTPController = async(req,res) => {
+const driverOTPController = async (req, res) => {
   try {
-    const {otp} = req.body;
+    const { otp } = req.body;
     if (otp == req.session.OTP) {
       const token = jwt.sign(
-        {id:req.session.user},
+        { id: req.session.user },
         process.env.JWT_SECRETKEY,
         {
-          expiresIn:'7d'
+          expiresIn: '7d'
         }
       );
-      res.status(200).send({message:'Login Successfully',success:true,token})
+      res.status(200).send({ message: 'Login Successfully', success: true, token })
     }
-    else
-    {
-      res.status(200).send({message:'OTP invalid',success:false})
+    else {
+      res.status(200).send({ message: 'OTP invalid', success: false })
     }
   } catch (error) {
     console.log(error);
     res.status(500).send({
-      message:`Error in Login ${error.message}`
+      message: `Error in Login ${error.message}`
     })
+  }
+}
+
+const updateAmbulanceLocation = async (req, res) => {
+  const { id, latitude, longitude } = req.body;
+  try {
+    const updatedCoords = await ambulance.findOneAndUpdate({ _id: id }, { latitude: latitude, longitude: longitude })
+    if (updatedCoords) {
+      res.status(200).send({ success: true, })
+    } else {
+      res.status(200).send({success: false, message: 'Ambulance not found!'})
+    }
+  } catch (error) {
+
   }
 }
 
@@ -119,5 +131,6 @@ module.exports = {
   checkLogin,
   authController,
   driverLoginController,
-  driverOTPController
+  driverOTPController,
+  updateAmbulanceLocation
 };

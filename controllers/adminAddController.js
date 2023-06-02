@@ -196,14 +196,15 @@ const admingetambulanceController = async (req, res) => {
 
 
 const controllergetAmbulanceController = async (req, res) => {
-  const { latitude, longitude } = req.body;
+  const { latitude, longitude, type } = req.body;
   try {
     const fetchAmbulance = await ambulance.find({
       $and: [
         { longitude: { $gte: longitude - 0.2, $lte: longitude + 0.2 } },
         { latitude: { $gte: latitude - 0.2, $lte: latitude + 0.2 } },
       ],
-      Status: 'ideal'
+      Status: 'ideal',
+      type: type
     });
     res.status(200).send({
       success: true,
@@ -244,16 +245,15 @@ const controllerPasswordUpdate = async (req, res) => {
           const salt = bcrypt.genSaltSync(10);
           const hashedPassword = bcrypt.hashSync(password, salt);
           const filter = { _id: userId };
-          const update = { password: hashedPassword };
           if (userType === 'controller') {
             const updateCtrl = await controller.findOneAndUpdate(
               filter,
-              update
+              { password: hashedPassword }
             );
           } else if (userType === 'driver') {
             const updateAmbulance = await ambulance.findOneAndUpdate(
-              { _id: userId },
-              update
+              filter,
+              { driverPassword: hashedPassword }
             );
           } else {
             res.status(200).send({ success: false, message: "user not found" });
