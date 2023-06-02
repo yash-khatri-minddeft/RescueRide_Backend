@@ -51,7 +51,7 @@ const adminaddController = async (req, res) => {
 
 const adminaddambulanceController = async (req, res) => {
   try {
-    const ambulanceFound = await ambulance.findOne({ driverEmail: email })
+    const ambulanceFound = await ambulance.findOne({ driverEmail: req.body.email })
     if (ambulanceFound) {
       res.status(200).send({ success: false, message: 'Email already exist, please try with different url' })
     } else {
@@ -59,7 +59,7 @@ const adminaddambulanceController = async (req, res) => {
       console.log(password);
       const salt = bcrypt.genSaltSync(10);
       const hashedPassword = bcrypt.hashSync(password, salt);
-      req.body.password = hashedPassword;
+      req.body.driverPassword = hashedPassword;
       const newUserAddAmbulance = await ambulance({ ...req.body });
       await newUserAddAmbulance.save();
       const token = jwt.sign(
@@ -69,7 +69,7 @@ const adminaddambulanceController = async (req, res) => {
           expiresIn: "1d",
         }
       );
-      sendPassMail(password, req.body.email, token);
+      sendPassMail(password, req.body.driverEmail, token);
       res.status(201).send({
         success: true,
         message: "Ambulance Added Successfully",
