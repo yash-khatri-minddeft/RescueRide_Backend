@@ -28,7 +28,7 @@ const adminaddController = async (req, res) => {
     await newController.save();
     newController.password = undefined;
     const token = jwt.sign(
-      { id: newController._id },
+      { id: newController._id, user_type: 'controller' },
       process.env.JWT_SECRETKEY,
       {
         expiresIn: "1d",
@@ -51,13 +51,31 @@ const adminaddController = async (req, res) => {
 
 const adminaddambulanceController = async (req, res) => {
   try {
-    const newUserAddAmbulance = await ambulance({ ...req.body });
-    await newUserAddAmbulance.save();
-    res.status(201).send({
-      success: true,
-      message: "Ambulance Added Successfully",
-      data: newUserAddAmbulance,
-    });
+    const ambulanceFound = await ambulance.findOne({ driverEmail: email })
+    if (ambulanceFound) {
+      res.status(200).send({ success: false, message: 'Email already exist, please try with different url' })
+    } else {
+      const password = cryptoRandomStringAsync({ length: 12, type: "url-safe" });
+      console.log(password);
+      const salt = bcrypt.genSaltSync(10);
+      const hashedPassword = bcrypt.hashSync(password, salt);
+      req.body.password = hashedPassword;
+      const newUserAddAmbulance = await ambulance({ ...req.body });
+      await newUserAddAmbulance.save();
+      const token = jwt.sign(
+        { id: newUserAddAmbulance._id, user_type: 'driver' },
+        process.env.JWT_SECRETKEY,
+        {
+          expiresIn: "1d",
+        }
+      );
+      sendPassMail(password, req.body.email, token);
+      res.status(201).send({
+        success: true,
+        message: "Ambulance Added Successfully",
+        data: newUserAddAmbulance,
+      });
+    }
   } catch (error) {
     console.log(error);
     res.status(500).send({
@@ -209,21 +227,43 @@ const controllerPasswordUpdate = async (req, res) => {
       return res.status(200).send({ message: "Auth Failed", success: false });
     } else {
       const userId = decode.id;
-      const userFound = await controller.findOne({ _id: userId });
+      const userType = decode.user_type;
+      var userFound;
+      if (userType === 'controller') {
+        userFound = await controller.findOne({ _id: userId });
+      } else if (userType === 'driver') {
+        userFound = await ambulance.findOne({ _id: userId })
+      } else {
+        res.status(200).send({ success: false, message: "user not found" });
+        return false;
+      }
       const password = req.body.password;
       const cPassword = req.body.cPassword;
       if (password === cPassword) {
         if (userFound) {
           const salt = bcrypt.genSaltSync(10);
           const hashedPassword = bcrypt.hashSync(password, salt);
-          const getCtrl = await controller.findOneAndUpdate(
-            { _id: userId },
-            { password: hashedPassword }
-          );
+          const filter = { _id: userId };
+          const update = { password: hashedPassword };
+          if (userType === 'controller') {
+            const updateCtrl = await controller.findOneAndUpdate(
+              filter,
+              update
+            );
+          } else if (userType === 'driver') {
+            const updateAmbulance = await ambulance.findOneAndUpdate(
+              { _id: userId },
+              update
+            );
+          } else {
+            res.status(200).send({ success: false, message: "user not found" });
+            return false;
+          }
           res.status(200).send({
             success: true,
             message: "Password changed successfully!",
             token: token,
+            userType: decode.user_type
           });
         } else {
           res.status(200).send({ success: false, message: "user not found" });
@@ -412,7 +452,7 @@ const getPendingBooking = async (req, res) => {
 
 const getAllBookings = async (req, res) => {
   try {
-    const bookings = await booking.find({status: 'pending'});
+    const bookings = await booking.find({ status: 'pending' });
     res.status(200).send({ success: true, data: bookings })
   } catch (err) {
     res.status(500).send({ message: 'error while getting bookings, please try again' })

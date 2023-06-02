@@ -27,6 +27,10 @@ const AmbulanceSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  driverPassword: {
+    type: String,
+    required: true,
+  },
   latitude: {
     type: Number,
     required: true,

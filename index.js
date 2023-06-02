@@ -11,6 +11,7 @@ const AdminRouter = require('./routes/AdminRouter');
 const AuthMiddleWare = require('./middlewares/AuthMiddleWare');
 const ControllerRouter = require('./routes/ControllerRoutes');
 const { Server } = require('socket.io');
+const driverRouter = require('./routes/DriverRoutes');
 
 const io = new Server({
   cors: {
@@ -31,6 +32,7 @@ app.use(session({
 }))
 app.use('/api/admin', AdminRouter);
 app.use('/api/controller', ControllerRouter);
+app.use('/api/driver',driverRouter);
 app.listen(4000, () => {
   mongoose.connect(process.env.CLUSTER_URL)
     .then(() => {
