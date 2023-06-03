@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const otpGenerator = require("otp-generator");
 const jwt = require("jsonwebtoken");
 const { sendMail } = require("./MailController");
+const booking = require("../models/BookingModel");
 
 const checkLogin = async (req, res) => {
   const getUserDetail = await ambulance.findById({ _id: req.body.userId });
@@ -120,10 +121,23 @@ const updateAmbulanceLocation = async (req, res) => {
     if (updatedCoords) {
       res.status(200).send({ success: true, })
     } else {
-      res.status(200).send({success: false, message: 'Ambulance not found!'})
+      res.status(200).send({ success: false, message: 'Ambulance not found!' })
     }
   } catch (error) {
 
+  }
+}
+
+const accpetBookingRequest = async (req, res) => {
+  const { ambulanceId, bookingId } = req.body;
+  console.log(bookingId)
+  const updateAmbulanceStatus = await ambulance.findOneAndUpdate({ _id: ambulanceId }, { Status: 'working' })
+  const updateBookingStatus = await booking.findOneAndUpdate({ _id: bookingId }, { status: 'current', ambulance_number: ambulanceId, ambulance_latitude: updateAmbulanceStatus.latitude, ambulance_longitude: updateAmbulanceStatus.longitude})
+  console.log(updateBookingStatus)
+  if (updateAmbulanceStatus && updateBookingStatus) {
+    res.status(200).send({ success: true, message: 'Booking Accepted!' })
+  } else {
+    res.status(200).send({ success: false, message: 'Error while Booking Ambulance!' })
   }
 }
 
@@ -132,5 +146,6 @@ module.exports = {
   authController,
   driverLoginController,
   driverOTPController,
-  updateAmbulanceLocation
+  updateAmbulanceLocation,
+  accpetBookingRequest,
 };
