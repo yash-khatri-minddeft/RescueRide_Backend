@@ -5,7 +5,7 @@ const hospital = require("../models/HospitalModel");
 const cryptoRandomStringAsync = require("crypto-random-string");
 const otpGenerator = require("otp-generator");
 const jwt = require("jsonwebtoken");
-const { sendMail, sendPassMail } = require("./MailController");
+const { sendMail, sendPassMail, sendBookingMail } = require("./MailController");
 const booking = require("../models/BookingModel");
 
 const adminaddController = async (req, res) => {
@@ -221,6 +221,16 @@ const controllergetAmbulanceController = async (req, res) => {
   }
 };
 
+const getAmbulanceById = async (req, res) => {
+  const {id} = req.body;
+  const foundAmbulance = await ambulance.findOne({_id:id})
+  if(foundAmbulance) {
+    res.status(200).send({success: true, data: foundAmbulance})
+  } else {
+    res.status(200).send({success: false, data: 'Ambulance Not Found!'})
+  }
+}
+
 const controllerPasswordUpdate = async (req, res) => {
   const token = req.body.token;
   jwt.verify(token, process.env.JWT_SECRETKEY, async (err, decode) => {
@@ -305,6 +315,7 @@ const addBookingController = async (req, res) => {
   try {
     const newAddBooking = await booking({ ...req.body });
     await newAddBooking.save();
+    sendBookingMail(req.body.email,newAddBooking._id)
     res.status(201).send({
       success: true,
       message: "Booking Added Successfully",
@@ -469,6 +480,7 @@ module.exports = {
   getBookingById,
   usergethospitalController,
   admingetambulanceController,
+  getAmbulanceById,
   controllergetAmbulanceController,
   controllerPasswordUpdate,
   checkControllerLogin,

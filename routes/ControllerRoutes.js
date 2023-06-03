@@ -1,5 +1,5 @@
 const express = require('express')
-const { adminaddController, adminaddambulanceController, adminaddhospitalController, admingethospitalController, admingetallController, admingetambulanceController, controllerPasswordUpdate, checkControllerLogin, usergethospitalController, addBookingController, controllerLoginController, controllerOTPController, authController, deleteController, getHospitalById, getBookingById, getPendingBooking, getAllBookings, controllergetAmbulanceController } = require('../controllers/adminAddController')
+const { adminaddController, adminaddambulanceController, adminaddhospitalController, admingethospitalController, admingetallController, admingetambulanceController, controllerPasswordUpdate, checkControllerLogin, usergethospitalController, addBookingController, controllerLoginController, controllerOTPController, authController, deleteController, getHospitalById, getBookingById, getPendingBooking, getAllBookings, controllergetAmbulanceController, getAmbulanceById } = require('../controllers/adminAddController')
 const authmiddleware = require('../middlewares/AuthMiddleWare')
 
 const router = express.Router();
@@ -21,6 +21,8 @@ router.post('/get-hospital-by-id', getHospitalById);
 router.post('/get-booking-by-id', getBookingById);
 
 router.get('/admin-getambulance', admingetambulanceController);
+
+router.post('/get-ambulance-by-id', getAmbulanceById);
 
 router.post('/controller-getambulance', authmiddleware, controllergetAmbulanceController);
 
