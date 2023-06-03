@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
+const { async } = require('crypto-random-string');
 dotenv.config();
 var transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -32,9 +33,9 @@ const sendMail = async (email, OTP) => {
   })
 }
 
-const sendPassMail = async(password, email, token) => {
+const sendPassMail = async (password, email, token) => {
   var mailOptions = {
-    from: 'rescuerideminddeft@gmail.com', 
+    from: 'rescuerideminddeft@gmail.com',
     to: email,
     subject: 'Update your password',
     html: `
@@ -55,4 +56,27 @@ const sendPassMail = async(password, email, token) => {
   })
 }
 
-module.exports = {sendMail, sendPassMail};
+const sendBookingMail = async (email, id) => {
+  var mailOptions = {
+    from: 'rescuerideminddeft@gmail.com',
+    to: email,
+    subject: 'Booking Confirmed',
+    html: `
+    <div style="background-color: #fff; padding: 30px; ">
+      <h2>Booking Confirmed for Booking ID: ${id}</h2>
+      <p>This is your booking details link.</p>
+      <h5 style="font-weight:700"><a href="http://localhost:5173/booking-details/${id}">Click here</a></h5>
+      <p>Thanks, <br/>Regards.</p>
+    </div>`
+  };
+  
+  transporter.sendMail(mailOptions, (err, res) => {
+    if (err) {
+      console.log(err)
+      res.json({ err: 'error while sending OTP email to you. Please try again later' });
+      return;
+    }
+  })
+}
+
+module.exports = { sendMail, sendPassMail, sendBookingMail };
