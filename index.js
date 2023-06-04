@@ -55,12 +55,12 @@ io.on('connection', (socket) => {
     io.emit('new_booking', (data))
   })
   socket.on('join', bookingId => {
-    console.log(bookingId)
+    console.log('booking',bookingId)
     socket.join(bookingId)
   })
-  socket.on('update-booking-status', id => {
-    console.log(id)
-    io.to(id).emit('get_new_location','HI'+id)
+  socket.on('update-booking-status', booking => {
+    console.log('hello:', booking)
+    io.to(booking[1]).emit('get_new_location',booking[0])
   })
   socket.on('update_location', async data => {
     // console.log(data)
