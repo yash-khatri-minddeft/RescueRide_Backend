@@ -130,12 +130,11 @@ const updateAmbulanceLocation = async (req, res) => {
     } else {
       res.status(200).send({ success: false, message: "Ambulance not found!" });
     }
-  } catch (error) {}
+  } catch (error) { }
 };
 
 const accpetBookingRequest = async (req, res) => {
   const { ambulanceId, bookingId } = req.body;
-  console.log(bookingId);
   const updateAmbulanceStatus = await ambulance.findOneAndUpdate(
     { _id: ambulanceId },
     { Status: "working" }
@@ -163,7 +162,7 @@ const getAllBookings = async (req, res) => {
   try {
     const bookingDriver = await booking.findOne({
       status: "current",
-      _id: req.body.id,
+      ambulance_number: req.body.id,
     });
     res.status(200).send({ success: true, data: bookingDriver });
   } catch (error) {
@@ -173,6 +172,28 @@ const getAllBookings = async (req, res) => {
   }
 };
 
+const changeAmbulanceStatus = async (req, res) => {
+  console.log(req.body);
+  const changeStatus = await ambulance.findOneAndUpdate({ _id: req.body.id }, { Status: req.body.status })
+  const changedStatus = await ambulance.findOne({ _id: req.body.id })
+  if (changeStatus) {
+    res.status(200).send({ success: true, message: 'Status Changes', data: changedStatus })
+  } else {
+    res.status(200).send({ success: false, message: 'Error while changing Status' })
+  }
+}
+
+const updateBookingAndAmbulancestatus = async (req, res) => {
+  const changeAmbulance = await ambulance.findOneAndUpdate({ _id: req.body.ambulanceId }, { Status: 'ideal', latitude: req.body.latitude, longitude: req.body.longitude });
+  const changeBooking = await booking.findOneAndUpdate({_id: req.body.bookingId}, {status: 'completed'})
+
+  if(changeAmbulance && changeBooking) {
+    res.status(200).send({success: true, message:'Data changes successfully'})
+  } else {
+    res.status(200).send({success: false, message:'Error while Changing data'})
+  }
+}
+
 module.exports = {
   checkLogin,
   authController,
@@ -181,4 +202,6 @@ module.exports = {
   updateAmbulanceLocation,
   accpetBookingRequest,
   getAllBookings,
+  changeAmbulanceStatus,
+  updateBookingAndAmbulancestatus
 };
