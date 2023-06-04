@@ -48,7 +48,10 @@ const driverLoginController = async (req, res) => {
         .status(200)
         .send({ message: "User Not Found", success: false });
     }
-    const isMatch = await bcrypt.compare(req.body.password, user.driverPassword);
+    const isMatch = await bcrypt.compare(
+      req.body.password,
+      user.driverPassword
+    );
     if (!isMatch) {
       return res
         .status(200)
@@ -98,48 +101,77 @@ const driverOTPController = async (req, res) => {
         { id: req.session.user },
         process.env.JWT_SECRETKEY,
         {
-          expiresIn: '7d'
+          expiresIn: "7d",
         }
       );
-      res.status(200).send({ message: 'Login Successfully', success: true, token })
-    }
-    else {
-      res.status(200).send({ message: 'OTP invalid', success: false })
+      res
+        .status(200)
+        .send({ message: "Login Successfully", success: true, token });
+    } else {
+      res.status(200).send({ message: "OTP invalid", success: false });
     }
   } catch (error) {
     console.log(error);
     res.status(500).send({
-      message: `Error in Login ${error.message}`
-    })
+      message: `Error in Login ${error.message}`,
+    });
   }
-}
+};
 
 const updateAmbulanceLocation = async (req, res) => {
   const { id, latitude, longitude } = req.body;
   try {
-    const updatedCoords = await ambulance.findOneAndUpdate({ _id: id }, { latitude: latitude, longitude: longitude })
+    const updatedCoords = await ambulance.findOneAndUpdate(
+      { _id: id },
+      { latitude: latitude, longitude: longitude }
+    );
     if (updatedCoords) {
-      res.status(200).send({ success: true, })
+      res.status(200).send({ success: true });
     } else {
-      res.status(200).send({ success: false, message: 'Ambulance not found!' })
+      res.status(200).send({ success: false, message: "Ambulance not found!" });
     }
-  } catch (error) {
-
-  }
-}
+  } catch (error) {}
+};
 
 const accpetBookingRequest = async (req, res) => {
   const { ambulanceId, bookingId } = req.body;
-  console.log(bookingId)
-  const updateAmbulanceStatus = await ambulance.findOneAndUpdate({ _id: ambulanceId }, { Status: 'working' })
-  const updateBookingStatus = await booking.findOneAndUpdate({ _id: bookingId }, { status: 'current', ambulance_number: ambulanceId, ambulance_latitude: updateAmbulanceStatus.latitude, ambulance_longitude: updateAmbulanceStatus.longitude})
-  console.log(updateBookingStatus)
+  console.log(bookingId);
+  const updateAmbulanceStatus = await ambulance.findOneAndUpdate(
+    { _id: ambulanceId },
+    { Status: "working" }
+  );
+  const updateBookingStatus = await booking.findOneAndUpdate(
+    { _id: bookingId },
+    {
+      status: "current",
+      ambulance_number: ambulanceId,
+      ambulance_latitude: updateAmbulanceStatus.latitude,
+      ambulance_longitude: updateAmbulanceStatus.longitude,
+    }
+  );
+  console.log(updateBookingStatus);
   if (updateAmbulanceStatus && updateBookingStatus) {
-    res.status(200).send({ success: true, message: 'Booking Accepted!' })
+    res.status(200).send({ success: true, message: "Booking Accepted!" });
   } else {
-    res.status(200).send({ success: false, message: 'Error while Booking Ambulance!' })
+    res
+      .status(200)
+      .send({ success: false, message: "Error while Booking Ambulance!" });
   }
-}
+};
+
+const getAllBookings = async (req, res) => {
+  try {
+    const bookingDriver = await booking.findOne({
+      status: "current",
+      _id: req.body.id,
+    });
+    res.status(200).send({ success: true, data: bookingDriver });
+  } catch (error) {
+    res
+      .status(500)
+      .send({ message: "error while getting bookings,please try again" });
+  }
+};
 
 module.exports = {
   checkLogin,
@@ -148,4 +180,5 @@ module.exports = {
   driverOTPController,
   updateAmbulanceLocation,
   accpetBookingRequest,
+  getAllBookings,
 };
