@@ -8,6 +8,8 @@ const {
   updateAmbulanceLocation,
   accpetBookingRequest,
   getAllBookings,
+  changeAmbulanceStatus,
+  updateBookingAndAmbulancestatus,
 } = require("../controllers/driverCtrl");
 const router = express.Router();
 
@@ -27,6 +29,9 @@ router.post(
 
 router.post("/update-booking-status", AuthMiddleWare, accpetBookingRequest);
 
-router.get("/get-all-current-bookings", getAllBookings);
+router.post("/get-all-current-bookings", AuthMiddleWare, getAllBookings);
 
+router.post('/change-ambulance-availibility', AuthMiddleWare, changeAmbulanceStatus);
+
+router.post('/change-booking-ambulance-status', AuthMiddleWare, updateBookingAndAmbulancestatus);
 module.exports = router;
