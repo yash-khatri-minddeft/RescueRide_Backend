@@ -158,7 +158,7 @@ const accpetBookingRequest = async (req, res) => {
   }
 };
 
-const getAllBookings = async (req, res) => {
+const  getAllBookings = async (req, res) => {
   try {
     const bookingDriver = await booking.findOne({
       status: "current",

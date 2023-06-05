@@ -127,10 +127,10 @@ const usergethospitalController = async (req, res) => {
   const { latitude, longitude } = req.body;
   try {
     const fetchHospital = await hospital.find({
-      $and: [
-        { longitude: { $gte: longitude - 1, $lte: longitude + 1 } },
-        { latitude: { $gte: latitude - 1, $lte: latitude + 1 } },
-      ]
+      // $and: [
+      //   { longitude: { $gte: longitude - 1, $lte: longitude + 1 } },
+      //   { latitude: { $gte: latitude - 1, $lte: latitude + 1 } },
+      // ]
     });
     res.status(200).send({
       success: true,
@@ -199,10 +199,10 @@ const controllergetAmbulanceController = async (req, res) => {
   const { latitude, longitude, type } = req.body;
   try {
     const fetchAmbulance = await ambulance.find({
-      $and: [
-        { longitude: { $gte: longitude - 1, $lte: longitude + 1 } },
-        { latitude: { $gte: latitude - 1, $lte: latitude + 1 } },
-      ],
+      // $and: [
+      //   { longitude: { $gte: longitude - 1, $lte: longitude + 1 } },
+      //   { latitude: { $gte: latitude - 1, $lte: latitude + 1 } },
+      // ],
       Status: 'ideal',
       type: type
     });
