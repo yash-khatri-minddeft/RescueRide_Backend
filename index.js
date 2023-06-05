@@ -58,7 +58,7 @@ io.on('connection', (socket) => {
     console.log('booking',bookingId)
     socket.join(bookingId)
   })
-  socket.on('update-booking-status', booking => {
+  socket.on('update-booking-status-socket', booking => {
     console.log('hello:', booking)
     io.to(booking[1]).emit('get_new_location',booking[0])
   })
