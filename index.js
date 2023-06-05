@@ -65,7 +65,14 @@ io.on('connection', (socket) => {
   socket.on('update_location', async data => {
     // console.log(data)
     const updatedCoords = await ambulance.findOneAndUpdate({ _id: data.id }, { latitude: data.latitude, longitude: data.longitude })
-    io.emit('get_location', updatedCoords)
+    const getUpdatedCoords = await ambulance.findOne({_id: data.id})
+    if(getUpdatedCoords.Status == 'ideal') {
+      io.emit('get_location', getUpdatedCoords)
+    }
+    if(getUpdatedCoords.Status == 'working') {
+      // console.log(data.id)
+      io.to(data.id).emit('get_location_private', getUpdatedCoords)
+    }
   })
 })
 io.listen(8080)
