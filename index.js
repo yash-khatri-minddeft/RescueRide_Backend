@@ -13,6 +13,7 @@ const ControllerRouter = require('./routes/ControllerRoutes');
 const { Server } = require('socket.io');
 const driverRouter = require('./routes/DriverRoutes');
 const ambulance = require('./models/AmbulanceModel');
+const hospital = require('./models/HospitalModel');
 
 const io = new Server({
   cors: {
@@ -58,9 +59,10 @@ io.on('connection', (socket) => {
     console.log('booking',bookingId)
     socket.join(bookingId)
   })
-  socket.on('update-booking-status-socket', booking => {
+  socket.on('update-booking-status-socket', async booking => {
     console.log('hello:', booking)
-    io.to(booking[1]).emit('get_new_location',booking[0])
+    const getHospital = await hospital.findOne({_id:booking[0].hospitalid})
+    io.to(booking[1]).emit('get_new_location',[booking[0],getHospital])
   })
   socket.on('update_location', async data => {
     // console.log(data)
