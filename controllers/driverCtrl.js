@@ -158,7 +158,7 @@ const accpetBookingRequest = async (req, res) => {
   }
 };
 
-const  getAllBookings = async (req, res) => {
+const getAllBookings = async (req, res) => {
   try {
     const bookingDriver = await booking.findOne({
       status: "current",
@@ -185,12 +185,12 @@ const changeAmbulanceStatus = async (req, res) => {
 
 const updateBookingAndAmbulancestatus = async (req, res) => {
   const changeAmbulance = await ambulance.findOneAndUpdate({ _id: req.body.ambulanceId }, { Status: 'ideal', latitude: req.body.latitude, longitude: req.body.longitude });
-  const changeBooking = await booking.findOneAndUpdate({_id: req.body.bookingId}, {status: 'completed'})
+  const changeBooking = await booking.findOneAndUpdate({ _id: req.body.bookingId }, { status: 'completed' })
 
-  if(changeAmbulance && changeBooking) {
-    res.status(200).send({success: true, message:'Data changes successfully'})
+  if (changeAmbulance && changeBooking) {
+    res.status(200).send({ success: true, message: 'Data changes successfully' })
   } else {
-    res.status(200).send({success: false, message:'Error while Changing data'})
+    res.status(200).send({ success: false, message: 'Error while Changing data' })
   }
 }
 
