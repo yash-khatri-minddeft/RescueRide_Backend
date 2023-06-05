@@ -17,7 +17,7 @@ const hospital = require('./models/HospitalModel');
 
 const io = new Server({
   cors: {
-    origin: "https://rescueride.onrender.com/"
+    origin: "https://rescueride.onrender.com"
   }
 })
 
