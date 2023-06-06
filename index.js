@@ -15,6 +15,7 @@ const http = require('http');
 const server = http.createServer(app);
 const driverRouter = require('./routes/DriverRoutes');
 const ambulance = require('./models/AmbulanceModel');
+const cors = require('cors');
 const hospital = require('./models/HospitalModel');
 
 const io = new Server(server, {
@@ -33,6 +34,9 @@ app.use(session({
     maxAge: 1000 * 60 * 30,
     httpOnly: true,
   }
+}))
+app.use(cors({
+  origin: "*"
 }))
 app.use('/api/admin', AdminRouter);
 app.use('/api/controller', ControllerRouter);
