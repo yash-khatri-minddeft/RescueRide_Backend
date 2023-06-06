@@ -12,7 +12,7 @@ router.post('/admin-addhospital', authmiddleware, adminaddhospitalController);
 
 router.get('/admin-getallcontroller', authmiddleware, admingetallController);
 
-router.post('/user-gethospital', usergethospitalController);
+router.get('/user-gethospital', usergethospitalController);
 
 router.get('/admin-gethospital', authmiddleware, admingethospitalController)
 
