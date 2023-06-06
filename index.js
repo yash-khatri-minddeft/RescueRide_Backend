@@ -66,7 +66,7 @@ io.on('connection', (socket) => {
   socket.on('update-booking-status-socket', async booking => {
     console.log('hello:', booking)
     const getHospital = await hospital.findOne({_id:booking[0].hospitalid})
-    io.to(booking[1]).emit('get_new_location',[booking[0],getHospital])
+    socket.to(booking[1]).emit('get_new_location',[booking[0],getHospital])
   })
   socket.on('update_location', async data => {
     // console.log(data)
