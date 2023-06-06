@@ -11,13 +11,15 @@ const AdminRouter = require('./routes/AdminRouter');
 const AuthMiddleWare = require('./middlewares/AuthMiddleWare');
 const ControllerRouter = require('./routes/ControllerRoutes');
 const { Server } = require('socket.io');
+const http = require('http');
+const server = http.createServer(app);
 const driverRouter = require('./routes/DriverRoutes');
 const ambulance = require('./models/AmbulanceModel');
 const hospital = require('./models/HospitalModel');
 
-const io = new Server({
+const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173"
+    origin: "*"
   }
 })
 
@@ -35,7 +37,7 @@ app.use(session({
 app.use('/api/admin', AdminRouter);
 app.use('/api/controller', ControllerRouter);
 app.use('/api/driver',driverRouter);
-app.listen(4000, () => {
+server.listen(4000, () => {
   mongoose.connect(process.env.CLUSTER_URL)
     .then(() => {
       console.log('Database Connected')
@@ -77,4 +79,3 @@ io.on('connection', (socket) => {
     }
   })
 })
-io.listen(8080)
