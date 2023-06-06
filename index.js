@@ -35,9 +35,7 @@ app.use(session({
     httpOnly: true,
   }
 }))
-app.use(cors({
-  origin: "*"
-}))
+app.use(cors())
 app.use('/api/admin', AdminRouter);
 app.use('/api/controller', ControllerRouter);
 app.use('/api/driver',driverRouter);
