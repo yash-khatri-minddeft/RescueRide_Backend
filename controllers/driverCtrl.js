@@ -164,7 +164,11 @@ const getAllBookings = async (req, res) => {
       status: "current",
       ambulance_number: req.body.id,
     });
-    res.status(200).send({ success: true, data: bookingDriver });
+    if(bookingDriver) {
+      res.status(200).send({ success: true, data: bookingDriver });
+    } else {
+      res.status(200).send({success:false})
+    }
   } catch (error) {
     res
       .status(500)
