@@ -4,7 +4,7 @@ const AmbulanceSchema = new mongoose.Schema({
   AmbulanceNumber: {
     type: String,
     required: true,
-    unique:true
+    unique: true
   },
   Status: {
     type: String,
@@ -40,7 +40,11 @@ const AmbulanceSchema = new mongoose.Schema({
     type: Number,
     required: true,
     default: "0.0"
-  }
+  },
+  route: [{
+    r_latitude: Number,
+    r_longitude: Number
+  }]
 })
 
 const ambulance = new mongoose.model('ambulance', AmbulanceSchema);
