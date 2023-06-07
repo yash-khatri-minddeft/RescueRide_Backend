@@ -52,31 +52,23 @@ server.listen(4000, () => {
 
 
 io.on('connection', (socket) => {
-  socket.on('join', (account) => {
-    socket.join(account.room)
-  })
   socket.on('greetings', (data) => {
-    console.log('hi', data)
     io.emit('new_booking', (data))
   })
   socket.on('join', bookingId => {
-    console.log('booking',bookingId)
     socket.join(bookingId)
   })
   socket.on('update-booking-status-socket', async booking => {
-    console.log('hello:', booking)
     const getHospital = await hospital.findOne({_id:booking[0].hospitalid})
-    io.to(booking[1]).emit('get_new_location',[booking[0],getHospital])
+    socket.to(booking[1]).emit('get_new_location',[booking[0],getHospital])
   })
   socket.on('update_location', async data => {
-    // console.log(data)
     const updatedCoords = await ambulance.findOneAndUpdate({ _id: data.id }, { latitude: data.latitude, longitude: data.longitude })
     const getUpdatedCoords = await ambulance.findOne({_id: data.id})
     if(getUpdatedCoords.Status == 'ideal') {
       io.emit('get_location', getUpdatedCoords)
     }
     if(getUpdatedCoords.Status == 'working') {
-      // console.log(data.id)
       io.to(data.id).emit('get_location_private', getUpdatedCoords)
     }
   })
