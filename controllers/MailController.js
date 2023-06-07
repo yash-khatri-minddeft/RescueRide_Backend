@@ -69,7 +69,7 @@ const sendBookingMail = async (email, id) => {
       <p>Thanks, <br/>Regards.</p>
     </div>`
   };
-  
+
   transporter.sendMail(mailOptions, (err, res) => {
     if (err) {
       console.log(err)
