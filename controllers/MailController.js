@@ -43,7 +43,7 @@ const sendPassMail = async (password, email, token) => {
       <h2>Please Update your password</h2>
       <p>This is your password: </p><h5 style="font-weight:700">${password}</h5>
       <p>To Update your password click on below link. The link is valid for only 1 day.</p>
-      <h5 style="font-weight:700"><a href="http://localhost:5173/change-ctrl-pasword?token=${token}">Click here</a></h5>
+      <h5 style="font-weight:700"><a href="https://rescueride.vercel.app/change-ctrl-pasword?token=${token}">Click here</a></h5>
       <p>If you didn't request this, you can ignore this email. <br />Thanks, <br/>Regards.</p>
     </div>`
   };
@@ -65,7 +65,7 @@ const sendBookingMail = async (email, id) => {
     <div style="background-color: #fff; padding: 30px; ">
       <h2>Booking Confirmed for Booking ID: ${id}</h2>
       <p>This is your booking details link.</p>
-      <h5 style="font-weight:700"><a href="http://localhost:5173/booking-details/${id}">Click here</a></h5>
+      <h5 style="font-weight:700"><a href="https://rescueride.vercel.app/booking-details/${id}">Click here</a></h5>
       <p>Thanks, <br/>Regards.</p>
     </div>`
   };

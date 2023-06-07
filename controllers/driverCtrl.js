@@ -148,7 +148,6 @@ const accpetBookingRequest = async (req, res) => {
       ambulance_longitude: updateAmbulanceStatus.longitude,
     }
   );
-  console.log(updateBookingStatus);
   if (updateAmbulanceStatus && updateBookingStatus) {
     res.status(200).send({ success: true, message: "Booking Accepted!" });
   } else {

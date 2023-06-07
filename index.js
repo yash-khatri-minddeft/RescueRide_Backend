@@ -38,7 +38,7 @@ app.use(session({
 app.use(cors())
 app.use('/api/admin', AdminRouter);
 app.use('/api/controller', ControllerRouter);
-app.use('/api/driver',driverRouter);
+app.use('/api/driver', driverRouter);
 server.listen(4000, () => {
   mongoose.connect(process.env.CLUSTER_URL)
     .then(() => {
@@ -59,17 +59,31 @@ io.on('connection', (socket) => {
     socket.join(bookingId)
   })
   socket.on('update-booking-status-socket', async booking => {
-    const getHospital = await hospital.findOne({_id:booking[0].hospitalid})
-    socket.to(booking[1]).emit('get_new_location',[booking[0],getHospital])
+    const getHospital = await hospital.findOne({ _id: booking[0].hospitalid })
+    socket.to(booking[1]).emit('get_new_location', [booking[0], getHospital])
   })
   socket.on('update_location', async data => {
-    const updatedCoords = await ambulance.findOneAndUpdate({ _id: data.id }, { latitude: data.latitude, longitude: data.longitude })
-    const getUpdatedCoords = await ambulance.findOne({_id: data.id})
-    if(getUpdatedCoords.Status == 'ideal') {
+    const getLastPosition = await ambulance.findOne({
+      _id: data.id
+    })
+    // console.log('last:',getLastPosition.route[getLastPosition.route.length - 1]?.r_latitude)
+    console.log('current:',data.latitude)
+    const updatedCoords = await ambulance.findOneAndUpdate(
+      { _id: data.id },
+      {
+        latitude: data.latitude,
+        longitude: data.longitude,
+        $push: {
+          route: { r_latitude: data.latitude, r_longitude: data.longitude }
+        }
+      })
+    const getUpdatedCoords = await ambulance.findOne({ _id: data.id })
+    if (getUpdatedCoords.Status == 'ideal') {
       io.emit('get_location', getUpdatedCoords)
     }
-    if(getUpdatedCoords.Status == 'working') {
+    if (getUpdatedCoords.Status == 'working') {
       io.to(data.id).emit('get_location_private', getUpdatedCoords)
     }
+    io.to(data.id).emit('get_ambulance_router', getUpdatedCoords)
   })
 })
